@@ -1,10 +1,8 @@
 
 // var searchTerm = "Richmond";
 // var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
-var queryURL = "api.openweathermap.org/data/2.5/weather?q=Richmond&appid=af1fa601daa4fd5df6a18a13cf8f70d9"
+var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=Richmond&appid=af1fa601daa4fd5df6a18a13cf8f70d9"
 var weatherData; 
-
-console.log(searchTerm); 
 
 function pullWeatherData() {
 
