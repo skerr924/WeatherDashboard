@@ -3,10 +3,9 @@ $(document).ready(function(){
 
   var searchTerm;
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
-  // var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=" + APIkey; 
   var cityHeader = $(".cityHeader");
 
-
+  // pulls current day weather data by city search term from the openweather api
   function pullWeatherData() {
       searchTerm = $(".searchBar").val(); 
       console.log(searchTerm);
@@ -16,27 +15,32 @@ $(document).ready(function(){
         url: "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=" + APIkey, 
         method: "GET"
       }).then(function(response) {
-        
-          // console.log(response);
-          // var cityDiv = $("<div class='cityDetails'>");
-          // var tempF = (response.main.temp - 273.15) * 9/5 + 32; 
-          // tempFRounded = Math.round(tempF * 10) / 10
-          // cityHeader.text(searchTerm); 
-          // cityDiv.text("Current temp: " + tempFRounded); 
-          // $(".infoSection").append(cityHeader);
-          // $(".infoSection").append(cityDiv);
           displayDetails(response);
-
       });
 
     }
 
+  // pulls weather 5 day weather data by city search term from the openweather api
+  function pullFiveDay() {
+    $.ajax({
+      url: "http://api.openweathermap.org/data/2.5/forecast?q=" + searchTerm + "&appid=" + APIkey, 
+      method: "GET"
+    }).then(function(response) {
+      
+        displayFiveDay(response);
+
+    });
+
+  }
+
+    //function allows for easily adding line breaks in element text line additions
     $.fn.multiline = function(text){
       this.text(text);
       this.html(this.html().replace(/\n/g,'<br/>'));
       return this;
     }
 
+    //displays all details within the city detail div 
     function displayDetails (response) {
       console.log(response);
       var cityDiv = $("<div class='cityDetails'>");
@@ -51,6 +55,11 @@ $(document).ready(function(){
       + tempLowRounded + "F \n Humidity: " + response.main.humidity + "% \nToday's Forecast: " + response.weather[0].main); 
       $(".infoSection").append(cityHeader);
       $(".infoSection").append(cityDiv);
+
+    }
+
+    function displayFiveDay (response) {
+      console.log(response);
 
     }
 
@@ -92,6 +101,7 @@ $(document).ready(function(){
 
 
   //all event listeners 
-  $(".submitBtn").on("click", pullWeatherData) 
+  $(".submitBtn").on("click", pullWeatherData); 
+  $(".submitBtn").on("click", pullFiveDay); 
 
 });
