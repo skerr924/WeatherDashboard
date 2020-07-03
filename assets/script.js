@@ -5,6 +5,11 @@ $(document).ready(function(){
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
   var cityHeader = $(".cityHeader");
   var fiveDayHeader = $(".fiveDayHeader"); 
+  var dayOneTempSum = 0;
+  var dayTwoTempSum = 0;
+  var dayThreeTempSum = 0;
+  var dayFourTempSum = 0;
+  var dayFiveTempSum = 0;
 
   // pulls current day weather data by city search term from the openweather api
   function pullWeatherData() {
@@ -63,13 +68,40 @@ $(document).ready(function(){
   function displayFiveDay (response) {
     console.log(response);
     fiveDayHeader.text("5-day forecast: " + response.city.name); 
-    var dayOneTempSum = 0;
+
     for (i = 0; i< 8; i++) {
       dayOneTempSum += response.list[i].main.temp;
     }
+
+    for (i = 8; i< 16; i++) {
+      dayTwoTempSum += response.list[i].main.temp;
+    }
+
+    for (i = 16; i< 24; i++) {
+      dayThreeTempSum += response.list[i].main.temp;
+    }
+
+    for (i = 24; i< 32; i++) {
+      dayFourTempSum += response.list[i].main.temp;
+    }
+
+    for (i = 32; i< 40; i++) {
+      dayFiveTempSum += response.list[i].main.temp;
+    }
+    
     var dayOneTempAverage = (dayOneTempSum / 8);  
-    console.log(cleanTemps(dayOneTempAverage));
-    ;
+    var dayTwoTempAverage = (dayTwoTempSum / 8);
+    var dayThreeTempAverage = (dayThreeTempSum / 8);
+    var dayFourTempAverage = (dayFourTempSum / 8);
+    var dayFiveTempAverage = (dayFiveTempSum / 8);
+    var tempOne = cleanTemps(dayOneTempAverage);
+    var tempTwo = cleanTemps(dayTwoTempAverage);
+    var tempThree = cleanTemps(dayThreeTempAverage);
+    var tempFour = cleanTemps(dayFourTempAverage);
+    var tempFive = cleanTemps(dayFiveTempAverage);
+
+    console.log (tempOne, tempTwo,  tempThree, tempFour, tempFive); 
+    
   }
 
   function cleanTemps (K) {
