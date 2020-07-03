@@ -1,10 +1,9 @@
 
 $(document).ready(function(){
 
-  var searchTerm = "";
+  var searchTerm;
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
   // var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=" + APIkey; 
-  var weatherData; 
   var cityHeader = $(".cityHeader");
 
 
@@ -18,19 +17,78 @@ $(document).ready(function(){
         method: "GET"
       }).then(function(response) {
         
-          console.log(response);
-          weatherData = response;
-          var cityDiv = $("<div class='cityDetails'>");
-          var tempF = (response.main.temp - 273.15) * 9/5 + 32; 
-          var tempFRounded = Math.round(tempF * 10) / 10
-          cityHeader.text(searchTerm); 
-          cityDiv.text("Current temp: " + tempFRounded); 
-          $(".infoSection").append(cityHeader);
-          $(".infoSection").append(cityDiv);
+          // console.log(response);
+          // var cityDiv = $("<div class='cityDetails'>");
+          // var tempF = (response.main.temp - 273.15) * 9/5 + 32; 
+          // tempFRounded = Math.round(tempF * 10) / 10
+          // cityHeader.text(searchTerm); 
+          // cityDiv.text("Current temp: " + tempFRounded); 
+          // $(".infoSection").append(cityHeader);
+          // $(".infoSection").append(cityDiv);
+          displayDetails(response);
 
       });
 
     }
+
+    $.fn.multiline = function(text){
+      this.text(text);
+      this.html(this.html().replace(/\n/g,'<br/>'));
+      return this;
+    }
+
+    function displayDetails (response) {
+      console.log(response);
+      var cityDiv = $("<div class='cityDetails'>");
+      var tempF = (response.main.temp - 273.15) * 9/5 + 32; 
+      var tempFRounded = Math.round(tempF * 10) / 10
+      var tempHigh = (response.main.temp_max - 273.15) * 9/5 + 32; 
+      var tempHighRounded = Math.round(tempHigh * 10) / 10; 
+      var tempLow = (response.main.temp_min - 273.15) * 9/5 + 32; 
+      var tempLowRounded = Math.round(tempLow * 10) / 10 ; 
+      cityHeader.text(searchTerm); 
+      cityDiv.multiline("Current temp: " + tempFRounded + "F \nHigh Temp: " + tempHighRounded + "F \nLow Temp: "
+      + tempLowRounded + "F \n Humidity: " + response.main.humidity + "% \nToday's Forecast: " + response.weather[0].main); 
+      $(".infoSection").append(cityHeader);
+      $(".infoSection").append(cityDiv);
+
+    }
+
+  //   <div class="col s12 m2">
+  //   <div class="card-panel teal">
+  //     <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+  //     I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+  //     </span>
+  //   </div>
+  // </div>
+  // <div class="col s12 m2">
+  //   <div class="card-panel teal">
+  //     <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+  //     I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+  //     </span>
+  //   </div>
+  // </div>
+  // <div class="col s12 m2">
+  //   <div class="card-panel teal">
+  //     <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+  //     I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+  //     </span>
+  //   </div>
+  // </div>
+  // <div class="col s12 m2">
+  //   <div class="card-panel teal">
+  //     <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+  //     I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+  //     </span>
+  //   </div>
+  // </div>
+  // <div class="col s12 m2">
+  //   <div class="card-panel teal">
+  //     <span class="white-text">I am a very simple card. I am good at containing small bits of information.
+  //     I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+  //     </span>
+  //   </div>
+  // </div>
 
 
   //all event listeners 
