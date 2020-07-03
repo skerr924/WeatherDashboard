@@ -51,7 +51,7 @@ $(document).ready(function(){
       var tempHighRounded = Math.round(tempHigh * 10) / 10; 
       var tempLow = (response.main.temp_min - 273.15) * 9/5 + 32; 
       var tempLowRounded = Math.round(tempLow * 10) / 10 ; 
-      cityHeader.text("City details: " + response.name); 
+      cityHeader.text("Current weather: " + response.name); 
       cityDiv.multiline("Current temp: " + tempFRounded + "F \nHigh Temp: " + tempHighRounded + "F \nLow Temp: "
       + tempLowRounded + "F \n Humidity: " + response.main.humidity + "% \nToday's Forecast: " + response.weather[0].main); 
       $(".infoSection").append(cityHeader);
@@ -61,7 +61,7 @@ $(document).ready(function(){
 
   function displayFiveDay (response) {
     console.log(response);
-    fiveDayHeader.text("5-day Forecast: " + response.city.name); 
+    fiveDayHeader.text("5-day forecast: " + response.city.name); 
 
   }
 
