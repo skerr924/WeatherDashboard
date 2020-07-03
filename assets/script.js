@@ -59,11 +59,24 @@ $(document).ready(function(){
 
   }
 
+  //displays five day data in cards 
   function displayFiveDay (response) {
     console.log(response);
     fiveDayHeader.text("5-day forecast: " + response.city.name); 
-
+    var dayOneTempSum = 0;
+    for (i = 0; i< 8; i++) {
+      dayOneTempSum += response.list[i].main.temp;
+    }
+    var dayOneTempAverage = (dayOneTempSum / 8);  
+    console.log(cleanTemps(dayOneTempAverage));
+    ;
   }
+
+  function cleanTemps (K) {
+    var cleanNumber = Math.round(((K - 273.15) * 9/5 + 32) * 10) / 10; 
+    return(cleanNumber);
+  }
+
 
   //   <div class="col s12 m2">
   //   <div class="card-panel teal">
