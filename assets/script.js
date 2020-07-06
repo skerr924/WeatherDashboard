@@ -6,10 +6,12 @@ $(document).ready(function(){
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
   var cityHeader = $(".cityHeader");
   var fiveDayHeader = $(".fiveDayHeader"); 
-  var fiveDayDetails = $(".fiveDayDetails")
   var lat; 
   var long; 
+  var currentIcon = $(".currentWeather");
+  var cities = []; 
 
+getStoredCities(); 
 
   //function allows for easily adding line breaks in element text line additions
   $.fn.multiline = function(text){
@@ -22,6 +24,7 @@ $(document).ready(function(){
   function pullBasicData() {
       searchTerm = $(".searchBar").val(); 
       $(".infoSection").empty(); 
+      saveCity();
 
       $.ajax({
         url: "http://api.openweathermap.org/data/2.5/weather?zip=" + searchTerm + ",us&appid=" + APIkey, 
@@ -63,21 +66,17 @@ $(document).ready(function(){
 
   //displays all details within the city detail div 
   function displayDetails (response) {
-      console.log(response);
       var cityDiv = $("<div class='cityDetails'>");
       var tempF = Math.floor(response.current.temp);
       var windSpeed = response.current.wind_speed; 
       var UVIndex = response.current.uvi; 
-      var iconCode = response.current.weather[0].icon; 
-      console.log(iconCode);
-      var icon = $("<img>"); 
-      icon.attr("href", "http://openweathermap.org/img/wn/" + iconCode + "@2x.png")
+      // var iconCode = response.current.weather[0].icon; //not working 
+      // currentIcon.attr("src", "http://openweathermap.org/img/wn/04n@2x.png") //not working 
       var currentDate = moment().format('MMMM Do YYYY, h:mm a');
       cityHeader.text("Current weather in " + city + ": " + currentDate); 
       cityDiv.multiline("Current temp: " + tempF + "F \nWind speed: " + windSpeed + " mph\nUV index: "
        + UVIndex + "\n Humidity: " + response.current.humidity + "% \nToday's Forecast: " + response.current.weather[0].description); 
       $(".infoSection").append(cityHeader);
-      $(".infoSection").append(icon);
       $(".infoSection").append(cityDiv);
 
   }
@@ -94,6 +93,59 @@ $(document).ready(function(){
     
   }
   
+  //saves each search to the local storage 
+  function saveCity() {
+    var newCity = {
+      zip: searchTerm,
+    }
+    cities.push(newCity);
+    storeCity();
+  }
+
+//adds new city searches to the local storage 
+function storeCity() {
+    // Stringify and set each event item in localStorage to
+    localStorage.setItem("cities", JSON.stringify(cities));
+}
+
+//get stored cities from local storage 
+function getStoredCities(){
+    var storedCities = JSON.parse(localStorage.getItem("cities")); 
+    if (storedCities == null){
+        storedCities = [];
+    }
+    else {
+        cities = storedCities;
+    }
+    renderCities(storedCities); 
+}
+
+//adds each new search as a button in the sidebar below search field 
+function renderCities(cities){
+  for (i = 0; i < cities.length; i++){
+     var newBtn = $("<button>")
+     newBtn.attr("id", cities[i].zip);
+     newBtn.text("newcity")
+     $(".sidebar").append(newBtn); 
+     newBtn.on("click", preSetSearch(cities[i].zip)); 
+  }
+}
+
+//slightly different search function for when the search is pre-set 
+function preSetSearch(zip) {
+  searchTerm = zip;
+      $(".infoSection").empty(); 
+      saveCity();
+
+      $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/weather?zip=" + searchTerm + ",us&appid=" + APIkey, 
+        method: "GET"
+      }).then(function(response) {
+          pullLatLong(response);
+          pullName (response); 
+          
+      });
+}
 
   //all event listeners 
   $(".submitBtn").on("click", pullBasicData); 
