@@ -2,135 +2,101 @@
 $(document).ready(function(){
 
   var searchTerm;
+  var city; 
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
   var cityHeader = $(".cityHeader");
   var fiveDayHeader = $(".fiveDayHeader"); 
   var fiveDayDetails = $(".fiveDayDetails")
-  var tempOne; 
-  var tempTwo; 
-  var tempThree; 
-  var tempFour; 
-  var tempFive; 
+  var lat; 
+  var long; 
 
-  // pulls current day weather data by city search term from the openweather api
-  function pullWeatherData() {
+
+  //function allows for easily adding line breaks in element text line additions
+  $.fn.multiline = function(text){
+    this.text(text);
+    this.html(this.html().replace(/\n/g,'<br/>'));
+    return this;
+}
+
+  // pulls the basic current data for the information input, this provides the lat long details for a separate data pull 
+  function pullBasicData() {
       searchTerm = $(".searchBar").val(); 
-      console.log(searchTerm);
       $(".infoSection").empty(); 
 
       $.ajax({
         url: "http://api.openweathermap.org/data/2.5/weather?zip=" + searchTerm + ",us&appid=" + APIkey, 
         method: "GET"
       }).then(function(response) {
-          displayDetails(response);
+          pullLatLong(response);
+          pullName (response); 
           
       });
 
     }
 
-  // pulls weather 5 day weather data by city search term from the openweather api
-  function pullFiveDay() {
-    $.ajax({
-      url: "http://api.openweathermap.org/data/2.5/forecast?q=" + + searchTerm + ",us&appid=" + APIkey, 
-      method: "GET"
-    }).then(function(response) {
-      
-        displayFiveDay(response);
+  //pulls the latitude and longitude data for the next API call 
+  function pullLatLong (response) {
+    lat = response.coord.lat;  
+    long = response.coord.lon; 
+    pullCompData (); 
 
-    });
+  }  
 
-  }
+   //pulls the city name and updates the city variable 
+   function pullName (response) {
+    city = response.name; 
 
-  //function allows for easily adding line breaks in element text line additions
-  $.fn.multiline = function(text){
-      this.text(text);
-      this.html(this.html().replace(/\n/g,'<br/>'));
-      return this;
+  }  
+
+  //pulls comprehensive data for all displays 
+  function pullCompData () {
+
+      $.ajax({
+        url: "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + long +"&units=imperial&appid=" + APIkey, 
+        method: "GET"
+      }).then(function(response) {
+          displayDetails(response);
+          displayFiveDay(response);
+          
+      });
   }
 
   //displays all details within the city detail div 
   function displayDetails (response) {
       console.log(response);
       var cityDiv = $("<div class='cityDetails'>");
-      var tempF = (response.main.temp - 273.15) * 9/5 + 32; 
-      var tempFRounded = Math.round(tempF * 10) / 10
-      var tempHigh = (response.main.temp_max - 273.15) * 9/5 + 32; 
-      var tempHighRounded = Math.round(tempHigh * 10) / 10; 
-      var tempLow = (response.main.temp_min - 273.15) * 9/5 + 32; 
-      var tempLowRounded = Math.round(tempLow * 10) / 10 ; 
-      cityHeader.text("Current weather: " + response.name); 
-      cityDiv.multiline("Current temp: " + tempFRounded + "F \nHigh Temp: " + tempHighRounded + "F \nLow Temp: "
-      + tempLowRounded + "F \n Humidity: " + response.main.humidity + "% \nToday's Forecast: " + response.weather[0].main); 
+      var tempF = Math.floor(response.current.temp);
+      var windSpeed = response.current.wind_speed; 
+      var UVIndex = response.current.uvi; 
+      var iconCode = response.current.weather[0].icon; 
+      console.log(iconCode);
+      var icon = $("<img>"); 
+      icon.attr("href", "http://openweathermap.org/img/wn/" + iconCode + "@2x.png")
+      var currentDate = moment().format('MMMM Do YYYY, h:mm a');
+      cityHeader.text("Current weather in " + city + ": " + currentDate); 
+      cityDiv.multiline("Current temp: " + tempF + "F \nWind speed: " + windSpeed + " mph\nUV index: "
+       + UVIndex + "\n Humidity: " + response.current.humidity + "% \nToday's Forecast: " + response.current.weather[0].description); 
       $(".infoSection").append(cityHeader);
+      $(".infoSection").append(icon);
       $(".infoSection").append(cityDiv);
 
   }
 
   //displays five day data in cards 
   function displayFiveDay (response) {
-    console.log(response);
     fiveDayHeader.text("5-day forecast"); 
-    allFiveDayAvgTemps(response); 
     $(".card-panel").removeClass("invisible");
-    $("#1").text("Average temp: " + tempOne);
-    $("#2").text("Average temp: " + tempTwo);
-    $("#3").text("Average temp: " + tempThree);
-    $("#4").text("Average temp: " + tempFour);
-    $("#5").text("Average temp: " + tempFive);
+    $("#1").text("Average temp: " + Math.floor(response.daily[0].temp.day) + "F \nHumidity: " + response.daily[0].humidity + "%");
+    $("#2").text("Average temp: " + Math.floor(response.daily[1].temp.day) + "F \nHumidity: " + response.daily[1].humidity + "%");
+    $("#3").text("Average temp: " + Math.floor(response.daily[2].temp.day) + "F \nHumidity: " + response.daily[2].humidity + "%");
+    $("#4").text("Average temp: " + Math.floor(response.daily[3].temp.day) + "F \nHumidity: " + response.daily[3].humidity + "%");
+    $("#5").text("Average temp: " + Math.floor(response.daily[4].temp.day) + "F \nHumidity: " + response.daily[4].humidity + "%");
     
   }
   
-  //function pulls 5days of temp averages 
-  function allFiveDayAvgTemps (response) {
-    var dayOneTempSum = 0;
-    var dayTwoTempSum = 0;
-    var dayThreeTempSum = 0;
-    var dayFourTempSum = 0;
-    var dayFiveTempSum = 0;  
-
-      for (i = 0; i< 8; i++) {
-        dayOneTempSum += response.list[i].main.temp;
-      }
-
-      for (i = 8; i< 16; i++) {
-        dayTwoTempSum += response.list[i].main.temp;
-      }
-
-      for (i = 16; i< 24; i++) {
-        dayThreeTempSum += response.list[i].main.temp;
-      }
-
-      for (i = 24; i< 32; i++) {
-        dayFourTempSum += response.list[i].main.temp;
-      }
-
-      for (i = 32; i< 40; i++) {
-        dayFiveTempSum += response.list[i].main.temp;
-      }
-      
-      var dayOneTempAverage = (dayOneTempSum / 8);  
-      var dayTwoTempAverage = (dayTwoTempSum / 8);
-      var dayThreeTempAverage = (dayThreeTempSum / 8);
-      var dayFourTempAverage = (dayFourTempSum / 8);
-      var dayFiveTempAverage = (dayFiveTempSum / 8);
-      tempOne = cleanTemps(dayOneTempAverage);
-      tempTwo = cleanTemps(dayTwoTempAverage);
-      tempThree = cleanTemps(dayThreeTempAverage);
-      tempFour = cleanTemps(dayFourTempAverage);
-      tempFive = cleanTemps(dayFiveTempAverage);
-  }
-
-  function cleanTemps (K) {
-    var cleanNumber = Math.round(((K - 273.15) * 9/5 + 32) * 10) / 10; 
-    return(cleanNumber);
-  }
-
-
-  
 
   //all event listeners 
-  $(".submitBtn").on("click", pullWeatherData); 
-  $(".submitBtn").on("click", pullFiveDay); 
+  $(".submitBtn").on("click", pullBasicData); 
 
 });
 
