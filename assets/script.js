@@ -134,6 +134,7 @@ getStoredCities();
 function storeCity() {
     // Stringify and set each event item in localStorage to
     localStorage.setItem("cities", JSON.stringify(cities));
+    
 }
 
 //get stored cities from local storage 
