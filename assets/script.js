@@ -41,7 +41,6 @@ getStoredCities();
           pullName (response); 
       });
       
-      saveCity(); 
     }
  
 
@@ -126,8 +125,26 @@ getStoredCities();
     var newCity = {
       zip: searchTerm,
     }
+
     cities.push(newCity);
     storeCity();
+
+    var newBtn = $("<button>")
+    tempTerm = searchTerm; 
+    console.log(searchTerm);
+    newBtn.attr("id", searchTerm);
+    newBtn.attr("class", "waves-effect waves-teal btn-flat prevSearch")
+    newBtn.text(searchTerm)
+    $(".recentSearches").prepend("</br>")
+    $(".recentSearches").prepend(newBtn); 
+    newBtn.on("click", function() {
+     var zipSearch = ($(this).attr("id"));
+
+     searchSideBarItem(zipSearch);
+    }); 
+
+  
+    
   }
 
 //adds new city searches to the local storage 
