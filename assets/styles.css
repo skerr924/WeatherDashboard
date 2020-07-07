@@ -41,3 +41,7 @@ p {
 .invisible { 
     display: none; 
 }
+
+.btn { 
+    background-color: rgb(31, 31, 63);
+}

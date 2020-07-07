@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
   var searchTerm; 
   var city; 
   var APIkey = "af1fa601daa4fd5df6a18a13cf8f70d9";
@@ -6,17 +7,10 @@ $(document).ready(function(){
   var fiveDayHeader = $(".fiveDayHeader"); 
   var lat; 
   var long; 
-  // var currentIcon = $(".currentWeather");
+  var currentIcon = $(".currentWeather");
   var cities = []; 
 
 getStoredCities(); 
-
-//function allows for easily adding line breaks in element text line additions
-//   $.fn.multiline = function(text){
-//     this.text(text);
-//     this.html(this.html().replace(/\n/g,'<br/>'));
-//     return this;
-// }
 
   // pulls the basic current data for the information input, this provides the lat long details for a separate data pull 
   function pullBasicData() {
@@ -37,10 +31,9 @@ getStoredCities();
     // pulls the basic current data for previously searched item 
     function searchSideBarItem(search) {
       $(".infoSection").empty(); 
-      searchTerm = search;
-      console.log(searchTerm);
+      console.log(search);
       $.ajax({
-        url: "https://api.openweathermap.org/data/2.5/weather?zip=" + searchTerm + ",us&appid=" + APIkey, 
+        url: "https://api.openweathermap.org/data/2.5/weather?zip=" + search + ",us&appid=" + APIkey, 
         method: "GET"
       }).then(function(response) {
         console.log("Pull Data Res: ", response)
@@ -87,8 +80,9 @@ getStoredCities();
       var tempF = Math.floor(response.current.temp);
       var windSpeed = response.current.wind_speed; 
       var UVIndex = response.current.uvi; 
-      // var iconCode = response.current.weather[0].icon; //not working 
-      // currentIcon.attr("src", "http://openweathermap.org/img/wn/04n@2x.png") //not working 
+      var iconCode = response.current.weather[0].icon; //not working 
+      console.log(iconCode);
+      currentIcon.attr("src", "https://openweathermap.org/img/wn/"+ iconCode + "@2x.png") //not working 
       var currentDate = moment().format('MMMM Do YYYY, h:mm a');
       cityHeader.text("Current weather in " + city + ": " + currentDate); 
       cityDiv.html("Current temp: " + tempF + "F <br/>Wind speed: " + windSpeed + " mph<br/>UV index: "
@@ -134,23 +128,32 @@ function getStoredCities(){
     else {
         cities = storedCities;
     }
+    
     renderCities(cities); 
+    console.log(cities);
 }
+
 
 //adds each new search as a button in the sidebar below search field 
 function renderCities(cities){
-  $.unique(cities); 
+  var tempTerm; 
+
   for (i = 0; i < cities.length; i++){
+    if (!cities[i].zip) {
+      return; 
+    }
      var newBtn = $("<button>")
-     var tempTerm = cities[i].zip; 
+     tempTerm = cities[i].zip; 
+     console.log(tempTerm);
      newBtn.attr("id", tempTerm);
      newBtn.attr("class", "waves-effect waves-teal btn-flat prevSearch")
      newBtn.text(tempTerm)
      $(".recentSearches").prepend("</br>")
      $(".recentSearches").prepend(newBtn); 
-     newBtn.on("click", function(tempTerm) {
-      console.log(tempTerm);
-      searchSideBarItem(tempTerm)
+     newBtn.on("click", function() {
+      var zipSearch = ($(this).attr("id"));
+
+      searchSideBarItem(zipSearch);
      }); 
   }
 }
