@@ -80,9 +80,8 @@ getStoredCities();
       var tempF = Math.floor(response.current.temp);
       var windSpeed = response.current.wind_speed; 
       var UVIndex = response.current.uvi; 
-      var iconCode = response.current.weather[0].icon; //not working 
-      console.log(iconCode);
-      currentIcon.attr("src", "https://openweathermap.org/img/wn/"+ iconCode + "@2x.png") //not working 
+      var iconCode = response.current.weather[0].icon; 
+      currentIcon.attr("src", "https://openweathermap.org/img/wn/"+ iconCode + "@2x.png") 
       var currentDate = moment().format('MMMM Do YYYY, h:mm a');
       cityHeader.text("Current weather in " + city + ": " + currentDate); 
       cityDiv.html("Current temp: " + tempF + "F <br/>Wind speed: " + windSpeed + " mph<br/>UV index: "
@@ -97,16 +96,28 @@ getStoredCities();
   function displayFiveDay (response) {
     fiveDayHeader.text("5-day forecast"); 
     $(".card-panel").removeClass("invisible");
+    console.log(response);
+    var iconOne = response.daily[0].weather[0].icon; 
+    var iconTwo = response.daily[1].weather[0].icon; 
+    var iconThree = response.daily[2].weather[0].icon; 
+    var iconFour = response.daily[3].weather[0].icon; 
+    var iconFive = response.daily[4].weather[0].icon; 
+    console.log(iconOne, iconTwo, iconThree, iconFour, iconFive)
     var dateOne = moment(). add(1,'days'). format('DD-MM-YYYY'); 
     var dateTwo = moment(). add(2,'days'). format('DD-MM-YYYY'); 
     var dateThree = moment(). add(3,'days'). format('DD-MM-YYYY'); 
     var dateFour = moment(). add(4,'days'). format('DD-MM-YYYY'); 
     var dateFive = moment(). add(5,'days'). format('DD-MM-YYYY'); 
-    $("#1").html("<b>" + dateOne + "</b><br/>Average temp: " + Math.floor(response.daily[0].temp.day) + "F <br/>Humidity: " + response.daily[0].humidity + "%");
-    $("#2").html("<b>" + dateTwo + "</b><br/>Average temp: " + Math.floor(response.daily[1].temp.day) + "F <br/>Humidity: " + response.daily[1].humidity + "%");
-    $("#3").html("<b>" + dateThree + "</b><br/>Average temp: " + Math.floor(response.daily[2].temp.day) + "F <br/>Humidity: " + response.daily[2].humidity + "%");
-    $("#4").html("<b>" + dateFour + "</b><br/>Average temp: " + Math.floor(response.daily[3].temp.day) + "F <br/>Humidity: " + response.daily[3].humidity + "%");
-    $("#5").html("<b>" + dateFive + "</b><br/>Average temp: " + Math.floor(response.daily[4].temp.day) + "F <br/>Humidity: " + response.daily[4].humidity + "%");
+    $("#dayOneIcon").attr("src", "https://openweathermap.org/img/wn/"+ iconOne + "@2x.png")
+    $("#dayTwoIcon").attr("src", "https://openweathermap.org/img/wn/"+ iconTwo + "@2x.png")
+    $("#dayThreeIcon").attr("src", "https://openweathermap.org/img/wn/"+ iconThree + "@2x.png")
+    $("#dayFourIcon").attr("src", "https://openweathermap.org/img/wn/"+ iconFour + "@2x.png")
+    $("#dayFiveIcon").attr("src", "https://openweathermap.org/img/wn/"+ iconFive + "@2x.png")
+    $("#1").html("<br/><b>" + dateOne + "</b><br/>Average temp: " + Math.floor(response.daily[0].temp.day) + "F <br/>Humidity: " + response.daily[0].humidity + "%");
+    $("#2").html("<br/><b>" + dateTwo + "</b><br/>Average temp: " + Math.floor(response.daily[1].temp.day) + "F <br/>Humidity: " + response.daily[1].humidity + "%");
+    $("#3").html("<br/><b>" + dateThree + "</b><br/>Average temp: " + Math.floor(response.daily[2].temp.day) + "F <br/>Humidity: " + response.daily[2].humidity + "%");
+    $("#4").html("<br/><b>" + dateFour + "</b><br/>Average temp: " + Math.floor(response.daily[3].temp.day) + "F <br/>Humidity: " + response.daily[3].humidity + "%");
+    $("#5").html("<br/><b>" + dateFive + "</b><br/>Average temp: " + Math.floor(response.daily[4].temp.day) + "F <br/>Humidity: " + response.daily[4].humidity + "%");
     
   }
   
@@ -132,11 +143,21 @@ function getStoredCities(){
         storedCities = [];
     }
     else {
-        cities = storedCities;
+        getUnique(storedCities); 
+
     }
     
     renderCities(cities); 
     console.log(cities);
+}
+
+//removes duplicates from an array 
+function getUnique(array){
+    for(i=0; i < array.length; i++){
+      if(cities.indexOf(array[i]) === -1) {
+          cities.push(array[i]);
+      }
+  }
 }
 
 
