@@ -1,8 +1,12 @@
 @media only screen and (min-width: 993px) {
     .container {
-      width: 95%;
+      width: 99%;
     }
   }
+
+.container { 
+    width: 95%
+}
 
 h4 {
     font-size: 24px; 
@@ -42,6 +46,15 @@ p {
     display: none; 
 }
 
+.card-panel { 
+    padding: 2px; 
+    margin: 0px; 
+}
+
 .btn { 
     background-color: rgb(31, 31, 63);
+}
+
+.col { 
+    padding: 3px; 
 }

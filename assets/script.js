@@ -90,17 +90,23 @@ getStoredCities();
       $(".infoSection").append(cityHeader);
       $(".infoSection").append(cityDiv);
 
+
   }
 
   //displays five day data in cards 
   function displayFiveDay (response) {
     fiveDayHeader.text("5-day forecast"); 
     $(".card-panel").removeClass("invisible");
-    $("#1").html("Average temp: " + Math.floor(response.daily[0].temp.day) + "F <br/>Humidity: " + response.daily[0].humidity + "%");
-    $("#2").html("Average temp: " + Math.floor(response.daily[1].temp.day) + "F <br/>Humidity: " + response.daily[1].humidity + "%");
-    $("#3").html("Average temp: " + Math.floor(response.daily[2].temp.day) + "F <br/>Humidity: " + response.daily[2].humidity + "%");
-    $("#4").html("Average temp: " + Math.floor(response.daily[3].temp.day) + "F <br/>Humidity: " + response.daily[3].humidity + "%");
-    $("#5").html("Average temp: " + Math.floor(response.daily[4].temp.day) + "F <br/>Humidity: " + response.daily[4].humidity + "%");
+    var dateOne = moment(). add(1,'days'). format('DD-MM-YYYY'); 
+    var dateTwo = moment(). add(2,'days'). format('DD-MM-YYYY'); 
+    var dateThree = moment(). add(3,'days'). format('DD-MM-YYYY'); 
+    var dateFour = moment(). add(4,'days'). format('DD-MM-YYYY'); 
+    var dateFive = moment(). add(5,'days'). format('DD-MM-YYYY'); 
+    $("#1").html("<b>" + dateOne + "</b><br/>Average temp: " + Math.floor(response.daily[0].temp.day) + "F <br/>Humidity: " + response.daily[0].humidity + "%");
+    $("#2").html("<b>" + dateTwo + "</b><br/>Average temp: " + Math.floor(response.daily[1].temp.day) + "F <br/>Humidity: " + response.daily[1].humidity + "%");
+    $("#3").html("<b>" + dateThree + "</b><br/>Average temp: " + Math.floor(response.daily[2].temp.day) + "F <br/>Humidity: " + response.daily[2].humidity + "%");
+    $("#4").html("<b>" + dateFour + "</b><br/>Average temp: " + Math.floor(response.daily[3].temp.day) + "F <br/>Humidity: " + response.daily[3].humidity + "%");
+    $("#5").html("<b>" + dateFive + "</b><br/>Average temp: " + Math.floor(response.daily[4].temp.day) + "F <br/>Humidity: " + response.daily[4].humidity + "%");
     
   }
   
